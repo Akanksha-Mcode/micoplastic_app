@@ -1,0 +1,232 @@
+<!-- Chosen Palette: Ocean Serenity -->
+<!-- Application Structure Plan: The application is designed as a single-page, scroll-driven narrative, guiding the user through the story of microplastic detection. The structure is broken down into four key thematic sections: 1) The Problem (a hero section introducing the crisis), 2) The Process (explaining how the technology works conceptually), 3) The Detector (the core interactive form where the user uploads an image), and 4) The Findings (displaying the analysis results). This structure was chosen to transform a simple utility into an educational and emotionally engaging experience, making the user feel like they are part of a scientific process, which is far more user-friendly than a simple form. -->
+<!-- Visualization & Content Choices: The application uses a narrative-driven structure to present information. The core interaction is the image upload and analysis, which is now placed within a dedicated section ("The Detector"). The results (original image, annotated image, and particle count) are dynamically revealed in a separate "Findings" section. The count is presented with an animating counter to add a "wow" factor and a sense of progress. There are no complex charts needed for this specific application, as the primary data point is a single count. The overall design uses smooth CSS animations and a clean layout to support the narrative, with no SVG graphics or Mermaid JS used. All visual elements are handled with Tailwind CSS, a small internal style block for animations, and Unicode characters for icons. -->
+<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AquaSense: A Microplastic Detector</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            color: #1a202c;
+        }
+        .section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 4rem 1.5rem;
+            text-align: center;
+        }
+        .gradient-bg {
+            background: linear-gradient(180deg, #f0f4f8 0%, #e6eef6 100%);
+        }
+        .scroll-button {
+            transition: transform 0.3s ease-in-out;
+        }
+        .scroll-button:hover {
+            transform: translateY(-5px);
+        }
+        .pulse-animation {
+            animation: pulse-ring 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); opacity: 1; }
+            100% { transform: scale(1.2); opacity: 0; }
+        }
+        .reveal-content {
+            animation: fadeInScale 0.8s ease-out forwards;
+            opacity: 0;
+            transform: scale(0.95);
+        }
+        @keyframes fadeInScale {
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+    <main id="app-container">
+        <!-- Hero Section -->
+        <section id="intro" class="section gradient-bg">
+            <div class="space-y-6 max-w-4xl mx-auto">
+                <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 leading-tight">
+                    Seeing the Unseen: The Microplastic Crisis
+                </h1>
+                <p class="text-lg sm:text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto">
+                    A silent threat exists in our waters. This tool helps you discover and quantify microplastics, bringing an invisible problem to light.
+                </p>
+                <a href="#detector" class="inline-block mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-full shadow-lg transition-all scroll-button">
+                    Start Detection ↓
+                </a>
+            </div>
+        </section>
+
+        <!-- How it Works Section -->
+        <section id="process" class="section bg-white">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-6">How Our Detector Works</h2>
+                <p class="text-lg text-gray-600 mb-12 max-w-3xl mx-auto">
+                    Our system uses a simple yet powerful computer vision algorithm to analyze an image for microscopic particles, highlighting potential microplastics.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="flex flex-col items-center p-6 rounded-xl border border-gray-200 shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
+                        <span class="text-5xl mb-4">📸</span>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2">1. Upload Image</h3>
+                        <p class="text-gray-500 text-sm">Upload a photo of a water sample taken under a microscope.</p>
+                    </div>
+                    <div class="flex flex-col items-center p-6 rounded-xl border border-gray-200 shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
+                        <span class="text-5xl mb-4">🔬</span>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2">2. Analyze</h3>
+                        <p class="text-gray-500 text-sm">The image is sent to our backend for quick analysis using OpenCV.</p>
+                    </div>
+                    <div class="flex flex-col items-center p-6 rounded-xl border border-gray-200 shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
+                        <span class="text-5xl mb-4">📊</span>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2">3. See Results</h3>
+                        <p class="text-gray-500 text-sm">The annotated image and a particle count are displayed in seconds.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Detector Section -->
+        <section id="detector" class="section gradient-bg">
+            <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-2xl mx-auto space-y-6">
+                <h2 class="text-3xl font-bold text-gray-900 mb-2">Get Started</h2>
+                <p class="text-gray-600">Upload your sample image below to begin the analysis.</p>
+                
+                <form id="upload-form" class="space-y-4">
+                    <input type="file" id="file-input" name="file" accept="image/*" class="w-full text-gray-700 bg-gray-200 p-3 rounded-lg cursor-pointer transition-colors duration-300 hover:bg-gray-300">
+                    <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">
+                        <span class="inline-block mr-2">🔎</span> Analyze Image
+                    </button>
+                </form>
+
+                <div id="loading-spinner" class="hidden text-center">
+                    <div class="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full mx-auto pulse-animation"></div>
+                    <p class="mt-2 text-gray-500">Scanning for particles...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section id="findings" class="section bg-white hidden">
+            <div class="max-w-4xl mx-auto w-full space-y-8 reveal-content">
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900">Your Findings are Ready</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-gray-100 p-6 rounded-xl shadow-lg border border-gray-200">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">Original Sample</h3>
+                        <div class="w-full h-80 rounded-lg overflow-hidden border border-gray-300 flex justify-center items-center p-2 bg-white">
+                            <img id="original-image" src="#" alt="Original Sample" class="w-full h-full object-contain">
+                        </div>
+                    </div>
+                    <div class="bg-gray-100 p-6 rounded-xl shadow-lg border border-gray-200">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">Annotated Results</h3>
+                        <div class="w-full h-80 rounded-lg overflow-hidden border border-gray-300 flex justify-center items-center p-2 bg-white">
+                            <img id="annotated-image" src="#" alt="Annotated Results" class="w-full h-full object-contain">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8">
+                    <div class="bg-blue-100 p-6 rounded-xl shadow-lg border border-blue-200">
+                        <p class="text-xl sm:text-2xl font-semibold text-blue-800">
+                            Total Microplastics Detected:
+                        </p>
+                        <p id="count" class="text-5xl sm:text-6xl font-bold text-blue-600 mt-2">0</p>
+                    </div>
+                </div>
+                
+            </div>
+        </section>
+
+    </main>
+    
+    <script>
+        // All JavaScript is now self-contained in this single file.
+        document.addEventListener("DOMContentLoaded", () => {
+            const form = document.getElementById('upload-form');
+            const fileInput = document.getElementById('file-input');
+            const loadingSpinner = document.getElementById('loading-spinner');
+            const resultsSection = document.getElementById('findings');
+            const originalImage = document.getElementById('original-image');
+            const annotatedImage = document.getElementById('annotated-image');
+            const countDisplay = document.getElementById('count');
+            const detectorSection = document.getElementById('detector');
+            const errorMessageDiv = document.createElement('div');
+            errorMessageDiv.classList.add('mt-4', 'text-red-600', 'font-semibold', 'hidden');
+            form.appendChild(errorMessageDiv);
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const file = fileInput.files[0];
+                if (!file) {
+                    errorMessageDiv.textContent = 'Please select an image file to upload.';
+                    errorMessageDiv.classList.remove('hidden');
+                    return;
+                }
+
+                errorMessageDiv.classList.add('hidden');
+                loadingSpinner.classList.remove('hidden');
+                resultsSection.classList.add('hidden');
+                
+                const formData = new FormData();
+                formData.append('file', file);
+
+                try {
+                    const response = await fetch('/analyze', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || 'Something went wrong on the server.');
+                    }
+
+                    const data = await response.json();
+
+                    // Set image sources
+                    originalImage.src = URL.createObjectURL(file);
+                    annotatedImage.src = data.summary.annotated_url;
+
+                    // Animate the counter
+                    let currentCount = 0;
+                    const targetCount = data.summary.count;
+                    const increment = Math.ceil(targetCount / 100); 
+
+                    const interval = setInterval(() => {
+                        if (currentCount < targetCount) {
+                            currentCount = Math.min(currentCount + increment, targetCount);
+                            countDisplay.textContent = currentCount;
+                        } else {
+                            clearInterval(interval);
+                        }
+                    }, 10);
+
+                    // Show results section and scroll to it
+                    loadingSpinner.classList.add('hidden');
+                    resultsSection.classList.remove('hidden');
+                    resultsSection.scrollIntoView({ behavior: 'smooth' });
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    loadingSpinner.classList.add('hidden');
+                    errorMessageDiv.textContent = `Error: ${error.message}`;
+                    errorMessageDiv.classList.remove('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+/*
+
+This file adds styling to the Microplastic Detector web application.
+
+It uses a simple color palette and layout to create a clean, modern look.
+*/
+
+body {
+    font-family: 'Inter', sans-serif;
+    }
+    
+    /* Base styling for the main container */
+    .container {
+    max-width: 900px;
+    }
+    
+    /* Style for the button */
+    button {
+    transition: background-color 0.3s ease;
+    }
+    
+    /* Styling for the image containers */
+    .image-container {
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    img {
+    max-width: 100%;
+    height: auto;
+    }
+    
+    /* Custom styles for status messages */
+    .status-message {
+    font-style: italic;
+    }
+    
+    /* Style for the upload form */
+    .form-container {
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    
+    /* Responsive layout adjustments for smaller screens */
+    @media (max-width: 640px) {
+    .grid {
+    display: block;
+    }
+    .grid > div {
+    margin-bottom: 1.5rem;
+    }
+    }
